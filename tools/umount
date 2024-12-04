@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+if [ "$(whoami)" != "root" ]; then
+	echo "Insufficient permissions. Execute as root..."
+	exit 1
+fi
+
+MOUNTPOINT=$(findmnt -lno TARGET,SOURCE \
+	| grep nbd \
+	| fzf --header "Select mount point" \
+	| awk '{print $1}')
+
+DEV=$(findmnt -n $MOUNTPOINT -o SOURCE)
+umount -v $MOUNTPOINT
+
+qemu-nbd -d $DEV
+echo "Detached device: $DEV"

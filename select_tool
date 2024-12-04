@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cd $(dirname $0)
+if [ -z "$1" ]; then
+	TOOL=$(ls tools | fzf --header "Select tool")
+else
+	TOOL=$(ls tools | grep $1)
+fi
+
+if [ ! -z "$TOOL" ]; then
+	eval tools/$TOOL $@
+else
+	echo "No tool found..."
+fi

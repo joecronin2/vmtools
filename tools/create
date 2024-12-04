@@ -1,0 +1,53 @@
+#!/bin/sh
+
+set -e
+
+get_os_name() {
+	while true; do
+		echo -n "OS Name: "
+		read OS_NAME
+		if [ -z $OS_NAME ]; then
+			echo "Enter a name..."
+			get_os_name
+		fi
+		exits=false
+		for f in $(ls os); do
+			if [ "$f" == "$OS_NAME" ]; then
+				echo "'$OS_NAME' already exists..."
+				exits=true
+				break
+			fi
+		done
+		if [ "$exits" = false ]; then
+			break
+		fi
+	done
+}
+
+get_disk_name() {
+	echo -n "Disk name [disk.qcow2]: "
+	read DISK_NAME
+	[ -z $DISK_NAME ] && DISK_NAME=disk.qcow2
+}
+
+get_disk_size() {
+    echo -n "Virtual disk size (not actually allocated on host because of CoW) [100G]: "
+    read DISK_SIZE
+    if [ -z "$DISK_SIZE" ]; then
+        DISK_SIZE="100G"
+    fi
+    echo "Disk size set to: $DISK_SIZE"
+}
+
+get_os_name
+get_disk_name
+get_disk_size
+
+DISK_PATH=./os/$OS_NAME/disks
+mkdir -vp $DISK_PATH
+touch $DISK_PATH/$DISK_NAME
+qemu-img create -fqcow2 $DISK_PATH/$DISK_NAME $DISK_SIZE
+
+echo "Created OS: $OS_NAME."
+echo ""
+echo "Use 'vmt start' to start the new VM"

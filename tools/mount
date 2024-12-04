@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -e
+
+disconnect_nbd() {
+	echo "Exiting..."
+	qemu-nbd -d $NBD_DEV
+}
+
+if [ "$(whoami)" != "root" ]; then
+	echo "Insufficient permissions. Execute as root..."
+	exit 1
+fi
+
+if [ -z "$(ls /dev | grep nbd)" ]; then
+	echo "No nbd devices detected. Load module now? (Y/n): "
+	read $CONFIRM
+	if [ "$CONFIRM" != "y" ]; then
+		echo "Max nbd partitions: "
+		read $NBD_MAX_PART
+		modprobe -v nbd max_part=$NBD_MAX_PART
+	fi
+fi
+
+DISK=$(fd -eqcow2 | fzf --header "Select disk image (.qcowv2)")
+NBD_DEV=$(fd nbd /dev | fzf --header "Select nbd device")
+
+qemu-nbd --connect=$NBD_DEV $DISK
+
+trap 'disconnect_nbd' ERR
+echo "Obtaining partitions..."
+sleep 1
+NBD_PART=$(lsblk -flpn -o NAME,FSTYPE,SIZE,TYPE /dev/nbd0 \
+	| awk '$4 == "part"' \
+	| fzf --header "Select partition" \
+	| awk '{print $1}')
+
+MOUNTPOINT=$(fd . -te -td /mnt | fzf --header "Select mountpoint")
+
+mount -v $NBD_PART $MOUNTPOINT

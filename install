@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+TARGET=/usr/bin/vmt
+
+if [ "$(whoami)" != "root" ]; then
+	echo "Insufficient permissions. Execute as root..."
+	exit 1
+fi
+
+mkdir -p tools os iso
+
+echo "#!/bin/sh" > $TARGET
+echo "eval $(pwd)/select_tool \$@" >> $TARGET
+echo "Created $TARGET"
+chmod -v a+x $TARGET
+
+echo "vmt installed successfully!"
+echo "Usage: vmt [tool]"

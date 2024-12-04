@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Available tools:"
+ls -1 tools

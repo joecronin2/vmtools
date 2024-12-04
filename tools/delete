@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+SELECTED_OS=os/$(ls os | fzf --header "Select OS")
+
+echo -n "Are you sure you want to delete $SELECTED_OS? (y/N): "
+read CONFIRM
+if [ "$CONFIRM" == "y" ]; then
+	rm -rvf $SELECTED_OS
+fi

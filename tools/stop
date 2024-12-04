@@ -1,0 +1,4 @@
+#!/bin/sh
+
+PID=$(ps -eo pid,cmd | grep [q]emu | fzf --header "Select VM" | awk '{print $1}')
+[ ! -z "$PID" ] && kill $PID
