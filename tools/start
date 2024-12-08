@@ -2,8 +2,6 @@
 
 set -e
 
-RECOMMENDED_CORES=$(($(nproc) / 2))
-
 if [ ! -x "/usr/bin/fzf" ]; then
 	echo "Please install fzf..."
 	exit 1
@@ -37,13 +35,13 @@ fi
 
 DISK=$OS/disks/$(ls $OS/disks | fzf --header "Select disk image")
 
-echo -n "How many threads? (you have $(nproc)) [$RECOMMENDED_CORES]: "
+echo -n "How many threads? (you have $(nproc)) [$DEF_CORES]: "
 read CORES
-[ -z "$CORES" ] && CORES=$RECOMMENDED_CORES
+[ -z "$CORES" ] && CORES=$DEF_CORES
 
-echo -n "How much memory? (you have $(free --giga -h | grep Mem | awk '{print $2}')) [2G]: "
+echo -n "How much memory? (you have $(free --giga -h | grep Mem | awk '{print $2}')) [$DEF_MEM]: "
 read MEM
-[ -z "$MEM" ] && MEM=2G
+[ -z "$MEM" ] && MEM=$DEF_MEM
 
 QEMU_CMD="qemu-system-x86_64 \
 	-enable-kvm \

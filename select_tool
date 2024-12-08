@@ -1,6 +1,10 @@
 #!/bin/sh
 
 cd $(dirname $0)
+
+export DEF_CORES=$(cat ./config/def_cores)
+export DEF_MEM=$(cat ./config/def_mem)
+
 if [ -z "$1" ]; then
 	TOOL=$(ls tools | fzf --header "Select tool")
 else
