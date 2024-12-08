@@ -2,6 +2,16 @@
 
 set -e
 
+# check if dependencies are installed
+missing_deps=false
+for dep in $(cat ./dependencies); do
+	if [ ! -e "$dep" ]; then
+		missing_deps=true
+		echo "Dependency $dep is not installed!"
+	fi
+
+done
+
 TARGET=/usr/bin/vmt
 
 if [ "$(whoami)" != "root" ]; then

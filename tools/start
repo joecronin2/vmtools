@@ -2,11 +2,6 @@
 
 set -e
 
-if [ ! -x "/usr/bin/fzf" ]; then
-	echo "Please install fzf..."
-	exit 1
-fi
-
 if [ -z "$(groups $USER | grep kvm)" ]; then
 	echo "You aren't a part of the KVM group..."
 	echo "To use kvm, execute this as root: (and you might need to reboot)"

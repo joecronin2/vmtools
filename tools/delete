@@ -5,11 +5,18 @@ set -e
 if [ -z "$2" ]; then
 	SELECTED_OS=os/$(ls os | fzf --header "Select OS")
 else 
-	SELECTED_OS=$2
+	SELECTED_OS=$(ls os | grep $2)
+fi
+
+if [ "$(echo "$SELECTED_OS" | wc -l)" -ne 1 ]; then
+    echo "Error: Selected more than one OS..." >&2
+    exit 1
 fi
 
 echo -n "Are you sure you want to delete $SELECTED_OS? (y/N): "
 read CONFIRM
 if [ "$CONFIRM" == "y" ]; then
 	rm -rvf $SELECTED_OS
+else
+	echo "Cancelled deletion..."
 fi

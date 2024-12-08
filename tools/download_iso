@@ -13,8 +13,8 @@ get_url() {
 }
 
 get_url
-cd iso
+pushd iso
 echo "Downloading $ISO_URL..."
 wget -v $ISO_URL
 echo "Download successful!"
-cd ..
+popd
