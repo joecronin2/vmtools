@@ -2,8 +2,17 @@
 
 set -e
 
+RECOMMENDED_CORES=$(($(nproc) / 2))
+
 if [ ! -x "/usr/bin/fzf" ]; then
 	echo "Please install fzf..."
+	exit 1
+fi
+
+if [ -z "$(groups $USER | grep kvm)" ]; then
+	echo "You aren't a part of the KVM group..."
+	echo "To use kvm, execute this as root: (and you might need to reboot)"
+	echo "usermod -aG kvm $USER"
 	exit 1
 fi
 
@@ -20,13 +29,6 @@ if [ -z "$(lsmod | grep kvm)" ]; then
 	echo "'modprobe kvm_amd' (for amd)"
 fi
 
-if [ -z "$(getent group | rg kvm | rg $USER)" ]; then
-	echo "You aren't a part of the KVM group..."
-	echo "To use kvm, execute this as root: (and you might need to reboot)"
-	echo "usermod -aG kvm $USER"
-	exit 1
-fi
-
 if [ -z "$2" ]; then
 	OS=os/$(ls os | fzf --header "Select OS")
 else
@@ -35,9 +37,9 @@ fi
 
 DISK=$OS/disks/$(ls $OS/disks | fzf --header "Select disk image")
 
-echo -n "How many threads? (you have $(nproc)) [2]: "
+echo -n "How many threads? (you have $(nproc)) [$RECOMMENDED_CORES]: "
 read CORES
-[ -z "$CORES" ] && CORES=2
+[ -z "$CORES" ] && CORES=$RECOMMENDED_CORES
 
 echo -n "How much memory? (you have $(free --giga -h | grep Mem | awk '{print $2}')) [2G]: "
 read MEM

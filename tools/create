@@ -8,7 +8,7 @@ get_os_name() {
 		read OS_NAME
 		if [ -z $OS_NAME ]; then
 			echo "Enter a name..."
-			get_os_name
+			break
 		fi
 		exits=false
 		for f in $(ls os); do
