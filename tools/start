@@ -42,7 +42,9 @@ QEMU_CMD="qemu-system-x86_64 \
 	-enable-kvm \
 	-smp $CORES \
 	-m $MEM \
-	-drive file=$DISK"
+	-drive file=$DISK \
+	-vga virtio"
+
 
 echo -n "Use cdrom? [y,N]: "
 read USE_CDROM
